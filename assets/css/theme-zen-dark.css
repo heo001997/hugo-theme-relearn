@@ -55,5 +55,4 @@ body a#R-logo:hover,
 body #R-logo svg,
 body #R-logo svg * {
     color: var(--MENU-HOME-LINK-color);
-    fill: var(--MENU-HOME-LINK-color) !important;
 }

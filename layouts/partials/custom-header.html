@@ -1,5 +1,44 @@
-<!-- Partial intended to be overwritten to add custom headers, like CSS or any other info
 <style>
-   /* Custom css */
+  /* lesser strong font */
+  b,
+  strong,
+  label,
+  th {
+    font-weight: 500;
+  }
+
+   /* Hide topbar by default */
+   #R-topbar {
+     display: none;
+   }
+
+   /* Show topbar on mobile devices */
+   @media only screen and (max-width: 768px) {
+     #R-topbar {
+       display: block;
+     }
+   }
+
+   /* General layout adjustments */
+   #R-footer {
+     padding-top: 12px;
+   }
+
+   #R-header-wrapper {
+     padding: 25px 0;
+   }
+
+   /* Collapsible menu adjustments */
+   #R-content-wrapper .collapsible-menu {
+     --label-padding: 10px;
+     --content-padding: 25px;
+   }
+
+   #R-content-wrapper .collapsible-menu label {
+     padding-left: var(--label-padding) !important;
+   }
+
+   #R-content-wrapper .collapsible-menu .padding {
+     padding-left: var(--content-padding) !important;
+   }
 </style>
--->
