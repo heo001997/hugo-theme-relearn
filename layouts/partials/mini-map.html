@@ -1,0 +1,156 @@
+{{ $miniMapImage := .Site.Params.miniMapImage }}
+{{ with .Resources.GetMatch "pinned-map.*" }}
+  {{ $miniMapImage = .RelPermalink }}
+{{ end }}
+
+{{ if $miniMapImage }}
+<div class="mini-map" title="Click or Press Space to show Full map&#10;Press M to hide mini map">
+  <img src="{{ $miniMapImage }}" alt="Mini Map">
+</div>
+
+<div id="mini-map-dialog" class="mini-map-dialog">
+  <div class="mini-map-dialog-content">
+    <span class="close-dialog">&times;</span>
+    <img src="{{ $miniMapImage }}" alt="Mini Map Full Size">
+  </div>
+</div>
+
+<style>
+  .mini-map {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 9999;
+    cursor: pointer;
+  }
+
+  .mini-map::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: pre-line;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.1s;
+  }
+
+  .mini-map:hover::after {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .mini-map img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .mini-map-dialog {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+  }
+
+  .mini-map-dialog-content {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    width: 80%;
+  }
+
+  .mini-map-dialog-content img {
+    width: 100%;
+    height: auto;
+  }
+
+  .close-dialog {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  const miniMap = document.querySelector('.mini-map');
+  const dialog = document.getElementById('mini-map-dialog');
+  const closeButton = document.querySelector('.close-dialog');
+
+  function toggleFullMap() {
+    if (miniMap.style.display !== 'none' || dialog.style.display === 'block') {
+      const isFullMapVisible = dialog.style.display === 'block';
+      dialog.style.display = isFullMapVisible ? 'none' : 'block';
+      miniMap.style.display = isFullMapVisible ? 'block' : 'none';
+    }
+  }
+
+  function toggleMiniMapVisibility() {
+    const newState = miniMap.style.display === 'none' ? 'block' : 'none';
+    miniMap.style.display = newState;
+    localStorage.setItem('miniMapVisible', newState === 'block');
+    if (newState === 'none' && dialog.style.display === 'block') {
+      dialog.style.display = 'none';
+    }
+  }
+
+  function initializeMiniMapState() {
+    const isVisible = localStorage.getItem('miniMapVisible') !== 'false';
+    miniMap.style.display = isVisible ? 'block' : 'none';
+  }
+
+  miniMap.addEventListener('click', toggleFullMap);
+
+  closeButton.addEventListener('click', function() {
+    dialog.style.display = 'none';
+    miniMap.style.display = 'block';
+  });
+
+  dialog.addEventListener('click', function(event) {
+    if (event.target === dialog) {
+      dialog.style.display = 'none';
+      miniMap.style.display = 'block';
+    }
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space') {
+      if (miniMap.style.display !== 'none' || dialog.style.display === 'block') {
+        e.preventDefault();
+        toggleFullMap();
+      }
+    } 
+    if (e.code === 'KeyM') {
+      toggleMiniMapVisibility();
+    }
+    if (e.code === 'Escape' && dialog.style.display === 'block') {
+      dialog.style.display = 'none';
+      miniMap.style.display = 'block';
+    }
+  });
+
+  // Initialize mini-map state on page load
+  initializeMiniMapState();
+</script>
+{{ end }}
